@@ -13,13 +13,14 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar'
-import { Crown, Scale, Calculator, MessageSquare, LayoutDashboard } from 'lucide-react'
+import { Crown, ClipboardList, BarChart, Clapperboard, LayoutDashboard } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Kit Jurídico', href: '/juridico', icon: Scale },
-  { name: 'Calculadora de Lucro', href: '/calculadora', icon: Calculator },
-  { name: 'Recepção que Vende', href: '/recepcao', icon: MessageSquare },
+  { name: 'Kit Jurídico', href: '/juridico', icon: ClipboardList },
+  { name: 'Calculadora de Lucro', href: '/calculadora', icon: BarChart },
+  { name: 'Recepção que Vende', href: '/recepcao', icon: Clapperboard },
 ]
 
 export default function Layout() {
@@ -66,15 +67,40 @@ export default function Layout() {
         </SidebarContent>
       </Sidebar>
       <SidebarInset className="bg-background">
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border/50 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <div className="w-px h-4 bg-border mx-2" />
-          <h1 className="font-heading text-lg text-foreground/90 font-semibold">
-            {navigation.find((n) => n.href === location.pathname)?.name || 'Mentoria'}
-          </h1>
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/50 px-4">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1" />
+            <div className="w-px h-4 bg-border mx-2" />
+            <div className="flex items-center gap-2">
+              <Crown className="size-5 text-primary hidden sm:block" />
+              <h1 className="font-heading text-lg text-foreground/90 font-semibold truncate max-w-[150px] sm:max-w-none">
+                Mentoria High-Ticket
+              </h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium hidden sm:inline-block">Maria Silva</span>
+            <Avatar className="size-8">
+              <AvatarImage
+                src="https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1"
+                alt="Student"
+              />
+              <AvatarFallback>MS</AvatarFallback>
+            </Avatar>
+          </div>
         </header>
-        <main className="flex-1 overflow-auto p-4 md:p-8 animate-fade-in">
-          <Outlet />
+        <main className="flex-1 overflow-auto p-4 md:p-8 animate-fade-in flex flex-col">
+          <div className="flex-1">
+            <Outlet />
+          </div>
+          <footer className="mt-12 pt-6 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+            <p>
+              &copy; {new Date().getFullYear()} Mentoria High-Ticket. Todos os direitos reservados.
+            </p>
+            <a href="#" className="hover:text-primary transition-colors font-medium">
+              Suporte
+            </a>
+          </footer>
         </main>
       </SidebarInset>
     </SidebarProvider>

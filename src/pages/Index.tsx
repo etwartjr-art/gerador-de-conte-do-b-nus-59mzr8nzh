@@ -1,32 +1,92 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Scale, Calculator, MessageSquare, ArrowRight, Sparkles } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ClipboardList, BarChart, Clapperboard, ArrowRight, Sparkles } from 'lucide-react'
+
+type Status = 'loading' | 'success' | 'empty' | 'error'
 
 export default function Index() {
-  const modules = [
-    {
-      title: 'Kit de Sobrevivência Jurídica',
-      description: 'Checklist da Lei do Salão Parceiro, modelos de NDA e alertas vitais.',
-      icon: Scale,
-      href: '/juridico',
-      color: 'text-amber-500',
-    },
-    {
-      title: 'Calculadora de Lucro Real',
-      description: 'Estrutura exata para calcular seu custo por minuto e lucro líquido.',
-      icon: Calculator,
-      href: '/calculadora',
-      color: 'text-emerald-500',
-    },
-    {
-      title: 'Recepção que Vende',
-      description: 'Scripts de vendas, mentalidade e mensagens de reativação.',
-      icon: MessageSquare,
-      href: '/recepcao',
-      color: 'text-blue-500',
-    },
-  ]
+  const [status, setStatus] = useState<Status>('loading')
+  const [modules, setModules] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchModules = async () => {
+      try {
+        setStatus('loading')
+        // Simulate an artificial delay to showcase the loading state
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        const data = [
+          {
+            title: 'Kit de Sobrevivência Jurídica',
+            description: 'Checklist da Lei do Salão Parceiro, modelos de NDA e alertas vitais.',
+            icon: ClipboardList,
+            href: '/juridico',
+            color: 'text-blue-500',
+          },
+          {
+            title: 'Calculadora de Lucro Real',
+            description: 'Estrutura exata para calcular seu custo por minuto e lucro líquido.',
+            icon: BarChart,
+            href: '/calculadora',
+            color: 'text-emerald-500',
+          },
+          {
+            title: 'Recepção que Vende',
+            description: 'Scripts de vendas, mentalidade e mensagens de reativação.',
+            icon: Clapperboard,
+            href: '/recepcao',
+            color: 'text-purple-500',
+          },
+        ]
+
+        if (data.length === 0) {
+          setStatus('empty')
+        } else {
+          setModules(data)
+          setStatus('success')
+        }
+      } catch (err) {
+        setStatus('error')
+      }
+    }
+
+    fetchModules()
+  }, [])
+
+  if (status === 'loading') {
+    return (
+      <div className="max-w-5xl mx-auto space-y-8">
+        <Skeleton className="h-[250px] w-full rounded-2xl" />
+        <div className="grid gap-6 md:grid-cols-3">
+          <Skeleton className="h-[220px] rounded-xl" />
+          <Skeleton className="h-[220px] rounded-xl" />
+          <Skeleton className="h-[220px] rounded-xl" />
+        </div>
+      </div>
+    )
+  }
+
+  if (status === 'error') {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 space-y-4 max-w-5xl mx-auto">
+        <p className="text-destructive font-medium text-lg">Erro ao carregar. Tente novamente</p>
+        <Button onClick={() => window.location.reload()} variant="outline">
+          Tentar Novamente
+        </Button>
+      </div>
+    )
+  }
+
+  if (status === 'empty') {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 max-w-5xl mx-auto text-muted-foreground">
+        <p className="font-medium text-lg">Nenhum bônus disponível</p>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -58,17 +118,17 @@ export default function Index() {
         {modules.map((mod) => (
           <Card
             key={mod.href}
-            className="group relative overflow-hidden border-border/50 bg-card/50 transition-all hover:border-primary/50 hover:bg-card"
+            className="group relative overflow-hidden border-border/50 bg-card/50 transition-all hover:border-primary/50 hover:bg-card flex flex-col"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-            <CardHeader>
+            <CardHeader className="flex-1">
               <mod.icon className={`size-10 mb-4 ${mod.color}`} />
               <CardTitle className="font-heading text-xl">{mod.title}</CardTitle>
-              <CardDescription className="text-sm leading-relaxed">
+              <CardDescription className="text-sm leading-relaxed mt-2">
                 {mod.description}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0 mt-auto">
               <Button asChild className="w-full group/btn" variant="outline">
                 <Link to={mod.href}>
                   Acessar Conteúdo
